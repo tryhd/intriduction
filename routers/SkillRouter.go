@@ -20,8 +20,8 @@ func SkillRoute(route *gin.Engine) {
 
 	skillRoutes := route.Group("api/v1/skill")
 	{
-		skillRoutes.GET("/", skillController.Get)
+		skillRoutes.GET("/:profile_code", skillController.Get)
 		skillRoutes.POST("/:profile_code", skillController.Insert)
-		skillRoutes.DELETE("/:id", skillController.Delete)
+		skillRoutes.DELETE("/:profile_code", skillController.Delete)
 	}
 }

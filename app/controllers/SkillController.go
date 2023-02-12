@@ -28,7 +28,9 @@ func NewSkillController(skillServ services.SkillService) SkillController {
 }
 
 func (c *skillController) Get(context *gin.Context) {
-	var skills []models.Skill = c.skillService.Get()
+	id := context.Param("profile_code")
+	intId, _ := strconv.Atoi(id)
+	var skills []models.Skill = c.skillService.Get(intId)
 
 	res := helpers.BuildResponse(true, "OK", skills)
 	context.JSON(http.StatusOK, res)
@@ -51,10 +53,14 @@ func (c *skillController) Insert(context *gin.Context) {
 
 func (c *skillController) Delete(context *gin.Context) {
 	var skill models.Skill
-	id := context.Query("profile_code")
+	skillId := context.Query("id")
+	intSkillId, _ := strconv.Atoi(skillId)
+
+	id := context.Param("profile_code")
 	intId, _ := strconv.Atoi(id)
 
-	skill.ID = intId
+	skill.ID = intSkillId
+	skill.ProfileID = intId
 	result := c.skillService.Delete(skill)
 	res := helpers.BuildResponse(true, "Deleted", result)
 	context.JSON(http.StatusOK, res)

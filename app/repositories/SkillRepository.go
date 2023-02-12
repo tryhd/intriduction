@@ -9,7 +9,7 @@ import (
 type SkillRepository interface {
 	InsertSkill(ct models.Skill) models.Skill
 	DeleteSkill(ct models.Skill) models.Skill
-	GetSkill() []models.Skill
+	GetSkill(id int) []models.Skill
 }
 
 type skillConnection struct{ connection *gorm.DB }
@@ -23,13 +23,16 @@ func (db *skillConnection) InsertSkill(skill models.Skill) models.Skill {
 }
 
 func (db *skillConnection) DeleteSkill(skill models.Skill) models.Skill {
-	db.connection.Where("profile_id", skill.ProfileID).Delete(&skill)
-	db.connection.Find(&skill)
-	return skill
+	db.connection.Debug().Where("profile_id", skill.ProfileID).Where("id", skill.ID).Delete(&skill)
+	db.connection.Select("profile_id").Find(&skill)
+	res := models.Skill{
+		ProfileID: skill.ProfileID,
+	}
+	return res
 }
 
-func (db *skillConnection) GetSkill() []models.Skill {
+func (db *skillConnection) GetSkill(id int) []models.Skill {
 	var skills []models.Skill
-	db.connection.Find(&skills)
+	db.connection.Select("id", "skill", "level").Omit("created_at", "updated_at").Where("profile_id", id).Find(&skills)
 	return skills
 }
