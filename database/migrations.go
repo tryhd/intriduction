@@ -12,9 +12,14 @@ var (
 )
 
 func InitialMigration() {
+	db.Migrator().DropTable(&models.WorkingExperience{})
+	db.Migrator().DropTable(&models.Employment{})
 	db.Migrator().DropTable(&models.Skill{})
 	db.Migrator().DropTable(&models.Profile{})
 
 	db.Migrator().CreateTable(&models.Profile{})
+	db.Migrator().CreateTable(&models.WorkingExperience{})
+	db.Migrator().CreateTable(&models.Employment{})
 	db.Migrator().CreateTable(&models.Skill{})
+
 }

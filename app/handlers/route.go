@@ -12,9 +12,9 @@ func Routing() {
 	r := gin.New()
 	r.Use(configs.CORSMiddleware())
 
-	routers.ContactRoute(r) //Added all contact routes
-	routers.SkillRoute(r)   //Added all skill routes
-	routers.ProfileRoute(r) //Added all skill routes
+	routers.ProfileRoute(r)           //Added all skill routes
+	routers.WorkingExperienceRoute(r) //Added all skill routes
+	routers.SkillRoute(r)             //Added all skill routes
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }

@@ -20,12 +20,13 @@ func main() {
 		AllowCredentials: true,
 		Debug:            true,
 	}))
-	// r.Static("/image/client", "/root/Go/src/intoduction/public/img/client")
-	// r.Static("/image/portfolio", "/root/Go/src/intoduction/public/img/portfolio")
-	routers.ContactRoute(r) //Added all contact routes
-	routers.SkillRoute(r)   //Added all skill routes
-	routers.ProfileRoute(r) //Added all skill routes
-	routers.PhotoRoute(r)   //Added all skill routes
+	r.Static("/image/client", "/root/Go/src/intoduction/public/img/client")
+	r.Static("/image/portfolio", "/root/Go/src/intoduction/public/img/portfolio")
+	routers.ProfileRoute(r)           //Added all skill routes
+	routers.WorkingExperienceRoute(r) //Added all skill routes
+	routers.EmploymentRoute(r)        //Added all skill routes
+	routers.SkillRoute(r)             //Added all skill routes
+	routers.PhotoRoute(r)             //Added all skill routes
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
