@@ -12,8 +12,7 @@ import (
 type SkillService interface {
 	Insert(skill dtos.SkillCreateDTO) models.Skill
 	Delete(skill models.Skill) models.Skill
-	All() []models.Skill
-	FindByID(skillID string) models.Skill
+	Get() []models.Skill
 }
 
 type skillService struct {
@@ -40,10 +39,6 @@ func (service *skillService) Delete(skill models.Skill) models.Skill {
 	return service.skillRepository.DeleteSkill(skill)
 }
 
-func (service *skillService) All() []models.Skill {
-	return service.skillRepository.AllSkill()
-}
-
-func (service *skillService) FindByID(skillID string) models.Skill {
-	return service.skillRepository.FindSkillByID(skillID)
+func (service *skillService) Get() []models.Skill {
+	return service.skillRepository.GetSkill()
 }

@@ -16,14 +16,8 @@ func main() {
 			second = args[2]
 		}
 
-		if first == "migrate-seed" {
+		if first == "migrate" {
 			database.InitialMigration()
-			database.InitialDBSeeder()
-			os.Exit(0)
-		} else if first == "migrate" {
-			database.InitialMigration()
-		} else if first == "seed" {
-			database.InitialDBSeeder()
 		} else if first == "model" {
 			if second == "" {
 				fmt.Println("make model <filename>")
