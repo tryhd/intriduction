@@ -13,7 +13,6 @@ type Employment struct {
 	EndDate     string    `json:"endDate" gorm:"not null"  binding:"required"`
 	City        string    `json:"city" gorm:"not null"  binding:"required"`
 	Description string    `json:"description" gorm:"not null"  binding:"required"`
-	Profile     Profile   `json:"profiles,omitempty" gorm:"foreignKey:ProfileID;references:ProfileCode"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }

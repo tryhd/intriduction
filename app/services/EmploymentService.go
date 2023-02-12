@@ -10,9 +10,9 @@ import (
 )
 
 type EmploymentService interface {
-	FindByID(EmploymentID int) models.Employment
+	FindByID(EmploymentID int) []models.Employment
 	Insert(employment dtos.EmploymentCreateDTO) models.Employment
-	Update(employment dtos.EmploymentUpdateDTO) models.Employment
+	Delete(employment models.Employment) models.Employment
 }
 
 type employmentService struct {
@@ -35,16 +35,10 @@ func (service *employmentService) Insert(employment dtos.EmploymentCreateDTO) mo
 	return res
 }
 
-func (service *employmentService) Update(employment dtos.EmploymentUpdateDTO) models.Employment {
-	newEmployment := models.Employment{}
-	err := smapping.FillStruct(&newEmployment, smapping.MapFields(&employment))
-	if err != nil {
-		log.Fatalf("Failed map %v: ", err)
-	}
-	res := service.employmentRepository.UpdateEmployment(newEmployment)
-	return res
+func (service *employmentService) Delete(employment models.Employment) models.Employment {
+	return service.employmentRepository.DeleteEmployment(employment)
 }
 
-func (service *employmentService) FindByID(EmploymentID int) models.Employment {
+func (service *employmentService) FindByID(EmploymentID int) []models.Employment {
 	return service.employmentRepository.FindEmploymentByID(EmploymentID)
 }

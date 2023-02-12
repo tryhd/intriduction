@@ -8,7 +8,6 @@ type WorkingExperience struct {
 	ID                int       `json:"id" gorm:"primaryKey;not null;autoIncrement:true"`
 	ProfileID         int       `json:"profileId" gorm:"not null"  binding:"required"`
 	WorkingExperience string    `json:"workingExperience" gorm:"not null"  binding:"required"`
-	Profile           Profile   `json:"profiles,omitempty" gorm:"foreignKey:ProfileID;references:ProfileCode"`
 	CreatedAt         time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt         time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }

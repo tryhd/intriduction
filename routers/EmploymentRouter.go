@@ -22,6 +22,6 @@ func EmploymentRoute(route *gin.Engine) {
 	{
 		EmploymentRoutes.GET("/:profile_code", employmentController.FindByID)
 		EmploymentRoutes.POST("/:profile_code", employmentController.Insert)
-		EmploymentRoutes.PUT("/:profile_code", employmentController.Update)
+		EmploymentRoutes.PUT("/:profile_code", employmentController.Delete)
 	}
 }

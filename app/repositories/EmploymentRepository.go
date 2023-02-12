@@ -9,9 +9,9 @@ import (
 type EmploymentRepository interface {
 	InsertEmployment(employment models.Employment) models.Employment
 
-	FindEmploymentByID(employmentID int) models.Employment
+	FindEmploymentByID(employmentID int) []models.Employment
 
-	UpdateEmployment(employment models.Employment) models.Employment
+	DeleteEmployment(employment models.Employment) models.Employment
 }
 
 type employmentConnection struct{ connection *gorm.DB }
@@ -27,14 +27,14 @@ func (db *employmentConnection) InsertEmployment(employment models.Employment) m
 	return employment
 }
 
-func (db *employmentConnection) FindEmploymentByID(employmentID int) models.Employment {
-	var employment models.Employment
+func (db *employmentConnection) FindEmploymentByID(employmentID int) []models.Employment {
+	var employment []models.Employment
 	db.connection.Where("profile_id =?", employmentID).First(&employment)
 	return employment
 }
 
-func (db *employmentConnection) UpdateEmployment(employment models.Employment) models.Employment {
-	db.connection.Omit("created_at").Save(&employment)
+func (db *employmentConnection) DeleteEmployment(employment models.Employment) models.Employment {
+	db.connection.Where("profile_id", employment.ProfileID).Delete(&employment)
 	db.connection.Find(&employment)
 	return employment
 }

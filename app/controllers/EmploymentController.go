@@ -14,7 +14,7 @@ import (
 type EmploymentController interface {
 	FindByID(context *gin.Context)
 	Insert(context *gin.Context)
-	Update(context *gin.Context)
+	Delete(context *gin.Context)
 }
 
 type employmentController struct {
@@ -30,15 +30,10 @@ func NewEmploymentController(employmentServ services.EmploymentService) Employme
 func (c *employmentController) FindByID(context *gin.Context) {
 	id := context.Param("profile_code")
 	intId, _ := strconv.Atoi(id)
-	var employment models.Employment = c.employmentService.FindByID(intId)
-	if (employment == models.Employment{}) {
-		res := helpers.BuildErrorResponse("Data not found", "No data with given id", helpers.EmptyObj{})
-		context.JSON(http.StatusNotFound, res)
-	} else {
-		// EmploymentUpdateDTO.EmploymentCode = intId
-		res := helpers.BuildResponse(true, "OK", employment)
-		context.JSON(http.StatusOK, res)
-	}
+	var employments []models.Employment = c.employmentService.FindByID(intId)
+
+	res := helpers.BuildResponse(true, "OK", employments)
+	context.JSON(http.StatusOK, res)
 }
 
 func (c *employmentController) Insert(context *gin.Context) {
@@ -52,23 +47,14 @@ func (c *employmentController) Insert(context *gin.Context) {
 	context.JSON(http.StatusCreated, response)
 }
 
-func (c *employmentController) Update(context *gin.Context) {
-	var employmentUpdateDTO dtos.EmploymentUpdateDTO
-	errDTO := context.ShouldBind(&employmentUpdateDTO)
-	if errDTO != nil {
-		res := helpers.BuildErrorResponse("Failed to process request", errDTO.Error(), helpers.EmptyObj{})
-		context.JSON(http.StatusBadRequest, res)
-	}
-	id := context.Param("profile_code")
+func (c *employmentController) Delete(context *gin.Context) {
+	var employment models.Employment
+	id := context.Query("profile_code")
 	intId, _ := strconv.Atoi(id)
-	var employment models.Employment = c.employmentService.FindByID(intId)
-	if (employment == models.Employment{}) {
-		res := helpers.BuildErrorResponse("Data not found", "No data with given id", helpers.EmptyObj{})
-		context.JSON(http.StatusNotFound, res)
-	} else {
-		employmentUpdateDTO.ProfileID = intId
-		result := c.employmentService.Update(employmentUpdateDTO)
-		response := helpers.BuildResponse(true, "OK", result)
-		context.JSON(http.StatusOK, response)
-	}
+
+	employment.ID = intId
+	result := c.employmentService.Delete(employment)
+	res := helpers.BuildResponse(true, "Deleted", result)
+	context.JSON(http.StatusOK, res)
+
 }
