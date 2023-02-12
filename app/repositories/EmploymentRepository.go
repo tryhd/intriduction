@@ -37,6 +37,7 @@ func (db *employmentConnection) DeleteEmployment(employment models.Employment) m
 	db.connection.Debug().Where("profile_id", employment.ProfileID).Where("id", employment.ID).Delete(&employment)
 	db.connection.Select("profile_id").Find(&employment)
 	res := models.Employment{
+		ID:        employment.ID,
 		ProfileID: employment.ProfileID,
 	}
 	return res

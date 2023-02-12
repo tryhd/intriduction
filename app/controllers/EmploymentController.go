@@ -49,10 +49,14 @@ func (c *employmentController) Insert(context *gin.Context) {
 
 func (c *employmentController) Delete(context *gin.Context) {
 	var employment models.Employment
-	id := context.Query("profile_code")
+	employmentId := context.Query("id")
+	intEmploymentId, _ := strconv.Atoi(employmentId)
+
+	id := context.Param("profile_code")
 	intId, _ := strconv.Atoi(id)
 
-	employment.ID = intId
+	employment.ID = intEmploymentId
+	employment.ProfileID = intId
 	result := c.employmentService.Delete(employment)
 	res := helpers.BuildResponse(true, "Deleted", result)
 	context.JSON(http.StatusOK, res)

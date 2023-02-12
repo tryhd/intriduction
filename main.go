@@ -27,6 +27,7 @@ func main() {
 	routers.EmploymentRoute(r)        //Added all skill routes
 	routers.SkillRoute(r)             //Added all skill routes
 	routers.PhotoRoute(r)             //Added all skill routes
+	routers.EducationRoute(r)         //Added all skill routes
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
