@@ -12,7 +12,7 @@ import (
 )
 
 type EmploymentController interface {
-	FindByID(context *gin.Context)
+	Get(context *gin.Context)
 	Insert(context *gin.Context)
 	Delete(context *gin.Context)
 }
@@ -27,10 +27,10 @@ func NewEmploymentController(employmentServ services.EmploymentService) Employme
 	}
 }
 
-func (c *employmentController) FindByID(context *gin.Context) {
+func (c *employmentController) Get(context *gin.Context) {
 	id := context.Param("profile_code")
 	intId, _ := strconv.Atoi(id)
-	var employments []models.Employment = c.employmentService.FindByID(intId)
+	var employments []models.Employment = c.employmentService.Get(intId)
 
 	res := helpers.BuildResponse(true, "OK", employments)
 	context.JSON(http.StatusOK, res)

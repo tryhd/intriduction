@@ -12,7 +12,7 @@ import (
 type SkillService interface {
 	Insert(skill dtos.SkillCreateDTO) models.Skill
 	Delete(skill models.Skill) models.Skill
-	Get() []models.Skill
+	Get(id int) []models.Skill
 }
 
 type skillService struct {
@@ -39,6 +39,6 @@ func (service *skillService) Delete(skill models.Skill) models.Skill {
 	return service.skillRepository.DeleteSkill(skill)
 }
 
-func (service *skillService) Get() []models.Skill {
-	return service.skillRepository.GetSkill()
+func (service *skillService) Get(id int) []models.Skill {
+	return service.skillRepository.GetSkill(id)
 }

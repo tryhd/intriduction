@@ -20,7 +20,7 @@ func EmploymentRoute(route *gin.Engine) {
 
 	EmploymentRoutes := route.Group("api/v1/employment")
 	{
-		EmploymentRoutes.GET("/:profile_code", employmentController.FindByID)
+		EmploymentRoutes.GET("/:profile_code", employmentController.Get)
 		EmploymentRoutes.POST("/:profile_code", employmentController.Insert)
 		EmploymentRoutes.PUT("/:profile_code", employmentController.Delete)
 	}

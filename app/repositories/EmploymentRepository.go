@@ -9,7 +9,7 @@ import (
 type EmploymentRepository interface {
 	InsertEmployment(employment models.Employment) models.Employment
 
-	FindEmploymentByID(employmentID int) []models.Employment
+	GetEmployment(id int) []models.Employment
 
 	DeleteEmployment(employment models.Employment) models.Employment
 }
@@ -27,14 +27,17 @@ func (db *employmentConnection) InsertEmployment(employment models.Employment) m
 	return employment
 }
 
-func (db *employmentConnection) FindEmploymentByID(employmentID int) []models.Employment {
-	var employment []models.Employment
-	db.connection.Where("profile_id =?", employmentID).First(&employment)
-	return employment
+func (db *employmentConnection) GetEmployment(id int) []models.Employment {
+	var employments []models.Employment
+	db.connection.Select("id", "job_title", "employer", "start_date", "end_date", "city", "description").Omit("created_at", "updated_at").Where("profile_id", id).Find(&employments)
+	return employments
 }
 
 func (db *employmentConnection) DeleteEmployment(employment models.Employment) models.Employment {
-	db.connection.Where("profile_id", employment.ProfileID).Delete(&employment)
-	db.connection.Find(&employment)
-	return employment
+	db.connection.Debug().Where("profile_id", employment.ProfileID).Where("id", employment.ID).Delete(&employment)
+	db.connection.Select("profile_id").Find(&employment)
+	res := models.Employment{
+		ProfileID: employment.ProfileID,
+	}
+	return res
 }

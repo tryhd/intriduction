@@ -10,7 +10,7 @@ import (
 )
 
 type EmploymentService interface {
-	FindByID(EmploymentID int) []models.Employment
+	Get(id int) []models.Employment
 	Insert(employment dtos.EmploymentCreateDTO) models.Employment
 	Delete(employment models.Employment) models.Employment
 }
@@ -39,6 +39,6 @@ func (service *employmentService) Delete(employment models.Employment) models.Em
 	return service.employmentRepository.DeleteEmployment(employment)
 }
 
-func (service *employmentService) FindByID(EmploymentID int) []models.Employment {
-	return service.employmentRepository.FindEmploymentByID(EmploymentID)
+func (service *employmentService) Get(id int) []models.Employment {
+	return service.employmentRepository.GetEmployment(id)
 }
