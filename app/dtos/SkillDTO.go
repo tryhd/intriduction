@@ -1,6 +1,7 @@
 package dtos
 
 type SkillCreateDTO struct {
-	ID        string `json:"id" form:"id"`
-	SkillName string `json:"skill_name" form:"skill_name" binding:"required"`
+	ProfileID int    `json:"profile_id" form:"profile_id"`
+	Level     string `json:"level" form:"level" binding:"required"`
+	Skill     string `json:"skill" form:"skill" binding:"required"`
 }

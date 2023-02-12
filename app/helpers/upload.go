@@ -1,58 +1,112 @@
 package helpers
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/base64"
 	"fmt"
-	"net/http"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
+	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"strings"
 )
 
-func FileUpload(c *gin.Context, path string, formFile string) string {
+func FileUpload(fileNameBase, data string) (path string) {
+	idx := strings.Index(data, ";base64,")
+	if idx < 0 {
+		panic("InvalidImage")
+	}
+	ImageType := data[11:idx]
+	log.Println(ImageType)
 
-	c.Request.ParseMultipartForm(32 << 20)
-
-	// file, handler, err := c.Request.FormFile("image")
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, err.Error())
-	// }
-	// defer file.Close()
-	// f, err := os.OpenFile(path+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, err.Error())
-	// }
-	// defer f.Close()
-	// io.Copy(f, file)
-
-	// return handler
-
-	file, err := c.FormFile(formFile)
-
-	// The file cannot be received.
+	unbased, err := base64.StdEncoding.DecodeString(data[idx+8:])
 	if err != nil {
-
-		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		panic("Cannot decode b64")
 	}
+	r := bytes.NewReader(unbased)
 
-	// Retrieve file information
-	extension := filepath.Ext(file.Filename)
-	// Generate random file name for the new uploaded file so it doesn't override the old file with same name
-	newFileName := uuid.New().String() + extension
+	switch ImageType {
+	case "png":
+		path = filepath.Join("app", "upload", "photo", fileNameBase+".png")
+		im, err := png.Decode(r)
+		if err != nil {
+			panic("Bad png")
+		}
 
-	// The file is received, so let's save it
-	_, err = os.Stat(path)
-	if os.IsNotExist(err) {
-		os.Mkdir(path, 0755)
+		f, err := os.Create(path)
+		if err != nil {
+			panic("Cannot open file")
+		}
+
+		png.Encode(f, im)
+		defer f.Close()
+	case "jpeg":
+		path = filepath.Join("app", "upload", "photo", fileNameBase+".jpeg")
+		im, err := jpeg.Decode(r)
+		if err != nil {
+			panic("Bad jpeg")
+		}
+
+		f, err := os.Create(path)
+		if err != nil {
+			panic("Cannot open file")
+		}
+
+		jpeg.Encode(f, im, nil)
+	case "jpg":
+		path = filepath.Join("app", "upload", "photo", fileNameBase+".jpg")
+
+		im, err := gif.Decode(r)
+		if err != nil {
+			panic("Bad jpg")
+		}
+
+		f, err := os.Create(path)
+		if err != nil {
+			panic("Cannot open file")
+		}
+
+		jpeg.Encode(f, im, nil)
+	case "gif":
+		path = filepath.Join("app", "upload", "photo", fileNameBase+".gif")
+
+		im, err := gif.Decode(r)
+		if err != nil {
+			panic("Bad gif")
+		}
+
+		f, err := os.Create(path)
+		if err != nil {
+			panic("Cannot open file")
+		}
+
+		gif.Encode(f, im, nil)
 	}
-	mydir, err := os.Getwd()
+	return path
+}
+
+func ImageBase(file string) string {
+	imgFile, err := os.Open(file)
+
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
-	if err := c.SaveUploadedFile(file, mydir+path+newFileName); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
-	}
-	return newFileName
 
+	defer imgFile.Close()
+
+	fInfo, _ := imgFile.Stat()
+	var size int64 = fInfo.Size()
+	buf := make([]byte, size)
+
+	fReader := bufio.NewReader(imgFile)
+	fReader.Read(buf)
+
+	imgBase64Str := base64.StdEncoding.EncodeToString(buf)
+	ext := strings.ReplaceAll(filepath.Ext(file), ".", "")
+	res := "data:image/" + ext + ";base64," + imgBase64Str
+	return res
 }

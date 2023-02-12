@@ -33,7 +33,7 @@ func (c *profileController) FindByID(context *gin.Context) {
 	id := context.Param("profile_code")
 	intId, _ := strconv.Atoi(id)
 	var Profile models.Profile = c.profileService.FindByID(intId)
-	if (Profile == models.Profile{}) {
+	if Profile.ProfileCode == 0 {
 		res := helpers.BuildErrorResponse("Data not found", "No data with given id", helpers.EmptyObj{})
 		context.JSON(http.StatusNotFound, res)
 	} else {
@@ -62,7 +62,7 @@ func (c *profileController) Update(context *gin.Context) {
 	id := context.Param("profile_code")
 	intId, _ := strconv.Atoi(id)
 	var profile models.Profile = c.profileService.FindByID(intId)
-	if (profile == models.Profile{}) {
+	if profile.ProfileCode == 0 {
 		res := helpers.BuildErrorResponse("Data not found", "No data with given id", helpers.EmptyObj{})
 		context.JSON(http.StatusNotFound, res)
 	} else {

@@ -6,12 +6,13 @@ import (
 	"intoduction/app/models"
 	"intoduction/app/services"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type SkillController interface {
-	All(context *gin.Context)
+	Get(context *gin.Context)
 	Insert(context *gin.Context)
 	Delete(context *gin.Context)
 }
@@ -26,8 +27,9 @@ func NewSkillController(skillServ services.SkillService) SkillController {
 	}
 }
 
-func (c *skillController) All(context *gin.Context) {
-	var skills []models.Skill = c.skillService.All()
+func (c *skillController) Get(context *gin.Context) {
+	var skills []models.Skill = c.skillService.Get()
+
 	res := helpers.BuildResponse(true, "OK", skills)
 	context.JSON(http.StatusOK, res)
 }
@@ -35,6 +37,9 @@ func (c *skillController) All(context *gin.Context) {
 func (c *skillController) Insert(context *gin.Context) {
 	var skillCreateDTO dtos.SkillCreateDTO
 	errDTO := context.ShouldBind(&skillCreateDTO)
+	id := context.Param("profile_code")
+	intId, _ := strconv.Atoi(id)
+	skillCreateDTO.ProfileID = intId
 	if errDTO != nil {
 		res := helpers.BuildErrorResponse("Failed to process request", errDTO.Error(), helpers.EmptyObj{})
 		context.JSON(http.StatusBadRequest, res)
@@ -46,15 +51,12 @@ func (c *skillController) Insert(context *gin.Context) {
 
 func (c *skillController) Delete(context *gin.Context) {
 	var skill models.Skill
-	id := context.Param("id")
-	skill = c.skillService.FindByID(id)
-	if (skill == models.Skill{}) {
-		res := helpers.BuildErrorResponse("Data not found", "No data with given id", helpers.EmptyObj{})
-		context.JSON(http.StatusNotFound, res)
-	} else {
-		skill.ID = id
-		result := c.skillService.Delete(skill)
-		res := helpers.BuildResponse(true, "Deleted", result)
-		context.JSON(http.StatusOK, res)
-	}
+	id := context.Query("profile_code")
+	intId, _ := strconv.Atoi(id)
+
+	skill.ID = intId
+	result := c.skillService.Delete(skill)
+	res := helpers.BuildResponse(true, "Deleted", result)
+	context.JSON(http.StatusOK, res)
+
 }
